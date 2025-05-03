@@ -54,3 +54,6 @@ TestResult.xml
 nunit-*.xml
 
 .idea/
+
+./entryflowBackend.API/appsettings.json
+./entryflowBackend.API/appsettings.Development.json
