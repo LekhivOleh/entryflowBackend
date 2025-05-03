@@ -53,7 +53,9 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-.idea/
 
-./entryflowBackend.API/appsettings.json
-./entryflowBackend.API/appsettings.Development.json
+appsettings.json
+appsettings.Development.json
+
+../.idea
+../entryflowBackend.sln.DotSettings.user
