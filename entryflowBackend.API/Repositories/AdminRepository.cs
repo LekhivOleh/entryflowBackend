@@ -9,13 +9,17 @@ public class AdminRepository(EntryflowDbContext context) : IAdminRepository
 {
     public async Task<Admin> GetAdminByIdAsync(Guid id)
     {
-        var admin = await context.Admins.SingleOrDefaultAsync(x => x.Id == id);
+        var admin = await context.Admins
+            .Include(x => x.Validator)
+            .SingleOrDefaultAsync(x => x.Id == id);
         return admin ?? throw new KeyNotFoundException($"Admin not found");
     }
 
     public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
     {
-        return await context.Admins.ToListAsync();
+        return await context.Admins
+            .Include(x => x.Validator)
+            .ToListAsync();
     }
 
     public async Task AddAdminAsync(Admin admin)
@@ -25,12 +29,12 @@ public class AdminRepository(EntryflowDbContext context) : IAdminRepository
 
     public void UpdateAdmin(Admin admin)
     {
-        context.Admins.Update(admin ?? throw new ArgumentNullException(nameof(admin)));
+        context.Admins.Update(admin);
     }
 
     public void DeleteAdmin(Admin admin)
     {
-        context.Admins.Remove(admin ?? throw new ArgumentNullException(nameof(admin)));
+        context.Admins.Remove(admin);
     }
 
     public async Task SaveChangesAsync()

@@ -35,7 +35,7 @@ public class ValidatorController(IValidatorService validatorService) : Controlle
         try
         {
             var validator = await validatorService.AddValidatorAsync(validatorDto);
-            return CreatedAtAction(nameof(GetValidatorById), new { id = validator.Id }, validator);
+            return CreatedAtAction(nameof(AddValidator), new { id = validator.Id }, validator);
         }
         catch (Exception ex)
         {

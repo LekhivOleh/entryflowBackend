@@ -4,10 +4,9 @@ namespace entryflowBackend.API.Interfaces.Services;
 
 public interface IAdminService
 {
-    Task<AdminDto> GetAdminByIdAsync(int id);
+    Task<AdminDto> GetAdminByIdAsync(Guid id);
     Task<IEnumerable<AdminDto>> GetAllAdminsAsync();
-    Task<CreateAdminDto> CreateAdminAsync(CreateAdminDto dto);
-    void UpdateAdminAsync(UpdateAdminDto dto);
-    void DeleteAdmin(int id);
-    Task SaveChangesAsync();
+    Task<AdminDto> CreateAdminAsync(CreateAdminDto dto);
+    Task UpdateAdminAsync(Guid id, UpdateAdminDto dto);
+    Task DeleteAdmin(Guid id);
 }

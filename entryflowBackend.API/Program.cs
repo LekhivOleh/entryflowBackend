@@ -20,9 +20,17 @@ public static class Program
 
         builder.Services.AddScoped<IValidatorRepository, ValidatorRepository>();
         builder.Services.AddScoped<IValidatorService, ValidatorService>();
+        builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+        builder.Services.AddScoped<IAdminService, AdminService>();
+
 
         // Add services to the container.
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
+        
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
