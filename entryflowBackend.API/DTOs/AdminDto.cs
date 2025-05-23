@@ -1,29 +1,20 @@
 namespace entryflowBackend.API.DTOs;
 
-public record AdminDto
+public class AdminDto
 {
     public Guid Id { get; set; }
-    public required string Name { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
     public required string Email { get; set; }
-    public required ValidatorBriefDto Validator { get; set; }
+    public required string Password { get; set; }
+    public required ValidatorDto Validator { get; set; }
 }
 
-public record CreateAdminDto
+public class AdminRequestDto
 {
-    public required string Name { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
     public required string Email { get; set; }
-    public required string PasswordHash { get; set; }
-    public Guid ValidatorId { get; set; }
-}
-
-public record UpdateAdminDto
-{
-    public string? Name { get; set; }
-    public string? Email { get; set; }
-}
-
-public record ValidatorBriefDto
-{
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public required string Password { get; set; }
+    public required ValidatorDto Validator { get; set; }
 }

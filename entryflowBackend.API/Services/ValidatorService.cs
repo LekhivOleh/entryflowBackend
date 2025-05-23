@@ -30,12 +30,18 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         });
     }
 
-    public async Task<ValidatorDto> AddValidatorAsync(CreateValidatorDto validatorDto)
+    public async Task<ValidatorDto> AddValidatorAsync(ValidatorRequestDto validatorRequestDto)
     {
+        if (string.IsNullOrWhiteSpace(validatorRequestDto.SecretKey)
+            || string.IsNullOrWhiteSpace(validatorRequestDto.Name))
+        {
+            throw new ArgumentNullException(nameof(validatorRequestDto));
+        }
         var validator = new Validator
         {
-            SecretKey = validatorDto.SecretKey,
-            Name = validatorDto.Name
+            Id = Guid.NewGuid(),
+            SecretKey = validatorRequestDto.SecretKey,
+            Name = validatorRequestDto.Name
         };
 
         await validatorRepository.AddValidatorAsync(validator);
@@ -49,7 +55,7 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         };
     }
 
-    public async Task UpdateValidatorAsync(Guid id, UpdateValidatorDto validatorDto)
+    public async Task UpdateValidatorAsync(Guid id, ValidatorRequestDto validatorDto)
     {
         var validator = await validatorRepository.GetValidatorByIdAsync(id);
         validator.Name = validatorDto.Name;
@@ -64,5 +70,17 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
 
         validatorRepository.DeleteValidator(validator);
         await validatorRepository.SaveChangesAsync();
+    }
+
+    public async Task<ValidatorDto> GetValidatorBySecretAsync(string secretKey)
+    {
+        var validator = await validatorRepository.GetValidatorBySecretAsync(secretKey);
+        
+        return new ValidatorDto
+        {
+            Id = validator.Id,
+            SecretKey = validator.SecretKey,
+            Name = validator.Name
+        };
     }
 }

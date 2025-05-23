@@ -17,14 +17,18 @@ public class AdminRepository(EntryflowDbContext context) : IAdminRepository
 
     public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
     {
-        return await context.Admins
+        var admins = await context
+            .Admins
             .Include(x => x.Validator)
             .ToListAsync();
+        return admins;
     }
 
     public async Task AddAdminAsync(Admin admin)
     {
-        await context.Admins.AddAsync(admin ?? throw new ArgumentNullException(nameof(admin)));
+        await context
+            .Admins
+            .AddAsync(admin ?? throw new ArgumentNullException(nameof(admin)));
     }
 
     public void UpdateAdmin(Admin admin)

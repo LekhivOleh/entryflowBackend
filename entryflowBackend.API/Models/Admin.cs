@@ -1,15 +1,21 @@
+using System.ComponentModel.DataAnnotations;
 namespace entryflowBackend.API.Models;
 public class Admin
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public required Guid Id { get; set; }
 
-    public required string Name { get; set; }
-
+    [MaxLength(20)]
+    public required string FirstName { get; set; }
+    
+    [MaxLength(20)]
+    public required string LastName { get; set; }
+    
+    [MaxLength(320)]
     public required string Email { get; set; }
+    
+    [MaxLength(50)]
+    public required string Password { get; set; }
 
-    public required string PasswordHash { get; set; }
-
-    public Guid ValidatorId { get; set; }
+    public required Guid ValidatorId { get; set; }
     public Validator Validator { get; set; }
-
 }

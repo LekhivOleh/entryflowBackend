@@ -1,3 +1,4 @@
+using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Models;
 
 namespace entryflowBackend.API.Interfaces.Repositories;
@@ -9,5 +10,6 @@ public interface IEmployeeRepository
     Task AddEmployeeAsync(Employee employee);
     void UpdateEmployee(Employee employee);
     void DeleteEmployee(Employee employee);
+    Task<EmployeeDto> GetEmployeeByCardUidAsync(string cardUid);
     Task SaveChangesAsync();
 }

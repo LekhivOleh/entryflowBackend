@@ -1,8 +1,14 @@
+using System.Net.WebSockets;
+using System.Text;
+using entryflowBackend.API.DTOs;
+using Newtonsoft.Json;
 using entryflowBackend.API.DbContext;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Interfaces.Services;
+using entryflowBackend.API.Models;
 using entryflowBackend.API.Repositories;
 using entryflowBackend.API.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -22,35 +28,35 @@ public static class Program
         builder.Services.AddScoped<IValidatorService, ValidatorService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
         builder.Services.AddScoped<IAdminService, AdminService>();
+        builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
+        builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
 
-        // Add services to the container.
         builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.WriteIndented = true;
             });
-        
+
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
-        
+
         app.MapOpenApi();
 
-        // Configure the HTTP request pipeline.
         app.MapScalarApiReference(options =>
         {
             options
                 .WithTitle("Entryflow APi")
                 .WithTheme(ScalarTheme.Saturn)
-                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+                .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.HttpClient);
         });
-
 
         app.MapGet("/", () => "At least it runs");
 
         app.UseAuthorization();
-
+        
         app.MapControllers();
 
         app.Run();

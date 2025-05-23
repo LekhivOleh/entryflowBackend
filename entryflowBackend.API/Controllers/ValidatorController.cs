@@ -30,11 +30,11 @@ public class ValidatorController(IValidatorService validatorService) : Controlle
     }
 
     [HttpPost(Name = "AddValidator")]
-    public async Task<IActionResult> AddValidator(CreateValidatorDto validatorDto)
+    public async Task<IActionResult> AddValidator(ValidatorRequestDto validatorRequestDto)
     {
         try
         {
-            var validator = await validatorService.AddValidatorAsync(validatorDto);
+            var validator = await validatorService.AddValidatorAsync(validatorRequestDto);
             return CreatedAtAction(nameof(AddValidator), new { id = validator.Id }, validator);
         }
         catch (Exception ex)
@@ -44,7 +44,7 @@ public class ValidatorController(IValidatorService validatorService) : Controlle
     }
 
     [HttpPut("{id}", Name = "UpdateValidator")]
-    public async Task<IActionResult> UpdateValidator(Guid id, UpdateValidatorDto validatorDto)
+    public async Task<IActionResult> UpdateValidator(Guid id, ValidatorRequestDto validatorDto)
     {
         await validatorService.UpdateValidatorAsync(id, validatorDto);
         return NoContent();

@@ -9,5 +9,6 @@ public interface IValidatorRepository
     Task AddValidatorAsync(Validator validator);
     void UpdateValidator(Validator validator);
     void DeleteValidator(Validator validator);
+    public Task<Validator> GetValidatorBySecretAsync(string? secretKey);
     Task SaveChangesAsync();
 }

@@ -4,7 +4,7 @@ namespace entryflowBackend.API.Models;
 
 public class Validator
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public required Guid Id { get; set; }
 
     [MaxLength(50)] public required string SecretKey { get; set; }
 

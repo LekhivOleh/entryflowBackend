@@ -2,11 +2,14 @@ using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Interfaces.Services;
 using entryflowBackend.API.Models;
-using entryflowBackend.API.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace entryflowBackend.API.Services;
 
-public class AdminService(IAdminRepository adminRepository, IValidatorRepository validatorRepository) : IAdminService
+public class AdminService(
+    IAdminRepository adminRepository,
+    IValidatorRepository validatorRepository,
+    IPasswordHasher<Admin> passwordHasher) : IAdminService
 {
     public async Task<AdminDto> GetAdminByIdAsync(Guid id)
     {
@@ -21,12 +24,15 @@ public class AdminService(IAdminRepository adminRepository, IValidatorRepository
         return new AdminDto
         {
             Id = admin.Id,
-            Name = admin.Name,
+            FirstName = admin.FirstName,
+            LastName = admin.LastName,
             Email = admin.Email,
-            Validator = new ValidatorBriefDto
+            Password = admin.Password,
+            Validator = new ValidatorDto()
             {
                 Id = validator.Id,
-                Name = validator.Name
+                Name = validator.Name,
+                SecretKey = validator.SecretKey
             }
         };
     }
@@ -38,19 +44,22 @@ public class AdminService(IAdminRepository adminRepository, IValidatorRepository
         return admins.Select(a => new AdminDto
         {
             Id = a.Id,
-            Name = a.Name,
+            FirstName = a.FirstName,
+            LastName = a.LastName,
             Email = a.Email,
-            Validator = new ValidatorBriefDto
+            Password = a.Password,
+            Validator = new ValidatorDto()
             {
                 Id = a.Validator.Id,
-                Name = a.Validator.Name
+                Name = a.Validator.Name,
+                SecretKey = a.Validator.SecretKey
             }
         });
     }
 
-    public async Task<AdminDto> CreateAdminAsync(CreateAdminDto adminDto)
+    public async Task<AdminDto> CreateAdminAsync(AdminRequestDto adminDto)
     {
-        var validator = await validatorRepository.GetValidatorByIdAsync(adminDto.ValidatorId);
+        var validator = await validatorRepository.GetValidatorByIdAsync(adminDto.Validator.Id);
 
         if (validator == null)
         {
@@ -59,11 +68,21 @@ public class AdminService(IAdminRepository adminRepository, IValidatorRepository
 
         var admin = new Admin
         {
-            Name = adminDto.Name,
+            Id = Guid.NewGuid(),
+            FirstName = adminDto.FirstName,
+            LastName = adminDto.LastName,
             Email = adminDto.Email,
-            PasswordHash = adminDto.PasswordHash,
-            ValidatorId = validator.Id
+            ValidatorId = validator.Id,
+            Password = adminDto.Password,
+            Validator = new Validator
+            {
+                Id = validator.Id,
+                Name = validator.Name,
+                SecretKey = validator.SecretKey
+            }
         };
+
+        admin.Password = passwordHasher.HashPassword(admin, adminDto.Password);
 
         await adminRepository.AddAdminAsync(admin);
         await adminRepository.SaveChangesAsync();
@@ -71,23 +90,27 @@ public class AdminService(IAdminRepository adminRepository, IValidatorRepository
         return new AdminDto
         {
             Id = admin.Id,
-            Name = admin.Name,
+            FirstName = admin.FirstName,
+            LastName = admin.LastName,
             Email = admin.Email,
-            Validator = new ValidatorBriefDto
+            Password = admin.Password,
+            Validator = new ValidatorDto()
             {
                 Id = validator.Id,
-                Name = validator.Name
+                Name = validator.Name,
+                SecretKey = validator.SecretKey
             }
         };
     }
 
 
-    public async Task UpdateAdminAsync(Guid id, UpdateAdminDto adminDto)
+    public async Task UpdateAdminAsync(Guid id, AdminRequestDto adminDto)
     {
         var admin = await adminRepository.GetAdminByIdAsync(id);
-        admin.Name = adminDto.Name ?? throw new ArgumentNullException(nameof(admin));
-        admin.Email = adminDto.Email ?? throw new ArgumentNullException(nameof(admin));
-        
+        admin.FirstName = adminDto.FirstName ?? throw new ArgumentNullException(nameof(adminDto));
+        admin.LastName = adminDto.LastName ?? throw new ArgumentNullException(nameof(adminDto));
+        admin.Email = adminDto.Email ?? throw new ArgumentNullException(nameof(adminDto));
+
         adminRepository.UpdateAdmin(admin);
         await adminRepository.SaveChangesAsync();
     }
