@@ -1,7 +1,3 @@
-using System.Net.WebSockets;
-using System.Text;
-using entryflowBackend.API.DTOs;
-using Newtonsoft.Json;
 using entryflowBackend.API.DbContext;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Interfaces.Services;
@@ -30,6 +26,8 @@ public static class Program
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+        builder.Services.AddScoped<IRfidLogRepository, RfidLogRepository>();
+        builder.Services.AddScoped<IRfidLogService, RfidLogService>();
 
         builder.Services.AddScoped<IPasswordHasher<Admin>, PasswordHasher<Admin>>();
 
