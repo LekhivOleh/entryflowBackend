@@ -27,13 +27,12 @@ public class AdminService(
             FirstName = admin.FirstName,
             LastName = admin.LastName,
             Email = admin.Email,
-            Password = admin.Password,
             Validator = new ValidatorDto()
             {
                 Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
+                Name = validator.Name
+            },
+            ValidatorId = admin.ValidatorId
         };
     }
 
@@ -47,19 +46,18 @@ public class AdminService(
             FirstName = a.FirstName,
             LastName = a.LastName,
             Email = a.Email,
-            Password = a.Password,
-            Validator = new ValidatorDto()
+            Validator = new ValidatorDto
             {
                 Id = a.Validator.Id,
-                Name = a.Validator.Name,
-                SecretKey = a.Validator.SecretKey
-            }
+                Name = a.Validator.Name
+            },
+            ValidatorId = a.ValidatorId
         });
     }
 
     public async Task<AdminDto> CreateAdminAsync(AdminRequestDto adminDto)
     {
-        var validator = await validatorRepository.GetValidatorByIdAsync(adminDto.Validator.Id);
+        var validator = await validatorRepository.GetValidatorByIdAsync(adminDto.ValidatorId);
 
         if (validator == null)
         {
@@ -74,12 +72,7 @@ public class AdminService(
             Email = adminDto.Email,
             ValidatorId = validator.Id,
             Password = adminDto.Password,
-            Validator = new Validator
-            {
-                Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
+            Validator = validator
         };
 
         admin.Password = passwordHasher.HashPassword(admin, adminDto.Password);
@@ -93,23 +86,24 @@ public class AdminService(
             FirstName = admin.FirstName,
             LastName = admin.LastName,
             Email = admin.Email,
-            Password = admin.Password,
-            Validator = new ValidatorDto()
+            Validator = new ValidatorDto
             {
                 Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
+                Name = validator.Name
+            },
+            ValidatorId = admin.ValidatorId
         };
     }
 
 
-    public async Task UpdateAdminAsync(Guid id, AdminRequestDto adminDto)
+    public async Task UpdateAdminAsync(Guid id, AdminUpdateDto adminDto)
     {
         var admin = await adminRepository.GetAdminByIdAsync(id);
-        admin.FirstName = adminDto.FirstName ?? throw new ArgumentNullException(nameof(adminDto));
-        admin.LastName = adminDto.LastName ?? throw new ArgumentNullException(nameof(adminDto));
-        admin.Email = adminDto.Email ?? throw new ArgumentNullException(nameof(adminDto));
+        
+        if (!string.IsNullOrEmpty(adminDto.FirstName))
+            admin.FirstName = adminDto.FirstName;
+        if (!string.IsNullOrEmpty(adminDto.LastName))
+            admin.LastName = adminDto.LastName;
 
         adminRepository.UpdateAdmin(admin);
         await adminRepository.SaveChangesAsync();
