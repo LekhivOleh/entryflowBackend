@@ -1,12 +1,18 @@
 using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Services;
+using entryflowBackend.API.Models;
+using entryflowBackend.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace entryflowBackend.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccessController(IValidatorService validatorService, IEmployeeService employeeService) : ControllerBase
+public class AccessController(
+    IValidatorService validatorService, 
+    IEmployeeService employeeService,
+    IRfidLogService rfidLogService
+    ) : ControllerBase
 {
     [HttpPost("validate")]
     public async Task<IActionResult> ValidateCard([FromBody] CardValidationRequest request)
@@ -21,10 +27,15 @@ public class AccessController(IValidatorService validatorService, IEmployeeServi
             return BadRequest("denied");
 
         var employee = await employeeService.GetEmployeeByCardUidAsync(request.Uid);
-        if (employee == null || employee.Validator.Id != validator.Id)
+        if (employee == null || employee.ValidatorId != validator.Id)
             return BadRequest("denied");
 
-        // TODO log it
+        var rfidLog = new RfidLogRequestDto
+        {
+            ValidatorId = validator.Id,
+            EmployeeId = employee.Id
+        };
+        await rfidLogService.AddRfidLogAsync(rfidLog);
 
         return Ok("granted");
     }
