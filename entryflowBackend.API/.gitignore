@@ -487,4 +487,4 @@ Migrations/
 appsettings.json
 appsettings.Development.json
 
-../entryflowBackend.sln.DotSettings.user
+*.sln.DotSettings.user
