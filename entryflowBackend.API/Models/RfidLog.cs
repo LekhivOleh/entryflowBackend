@@ -1,16 +1,22 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace entryflowBackend.API.Models;
 
 public class RfidLog
 {
-    public Guid Id { get; set; }
+    [Required]
+    public required Guid Id { get; set; }
     
-    public Guid ValidatorId { get; set; }
-    public Validator Validator { get; set; }
+    [Required]
+    public required Guid ValidatorId { get; set; }
+    [ForeignKey("ValidatorId")]
+    public Validator? Validator { get; set; }
 
-    public Guid EmployeeId { get; set; }
-    public Employee Employee { get; set; }
+    [Required]
+    public required Guid EmployeeId { get; set; }
+    [ForeignKey("EmployeeId")]
+    public Employee? Employee { get; set; }
     
     [Required]
     public required DateTime Timestamp { get; set; }
