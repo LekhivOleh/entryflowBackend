@@ -2,6 +2,7 @@ using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Interfaces.Services;
 using entryflowBackend.API.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace entryflowBackend.API.Services;
 
@@ -10,23 +11,14 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorR
     public async Task<EmployeeDto> GetEmployeeByIdAsync(Guid id)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(id);
-        var validator = employee.Validator;
-
-        if (validator == null)
-        {
-            throw new Exception("Validator not found");
-        }
 
         return new EmployeeDto
         {
-            Name = employee.Name,
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
             CardUid = employee.CardUid,
-            Validator = new ValidatorDto
-            {
-                Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
+            ValidatorId = employee.ValidatorId
         };
     }
 
@@ -37,31 +29,25 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorR
         return employees.Select(e =>
             new EmployeeDto
             {
-                Name = e.Name,
+                Id = e.Id,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
                 CardUid = e.CardUid,
-                Validator = new ValidatorDto
-                {
-                    Id = e.Validator.Id,
-                    Name = e.Validator.Name,
-                    SecretKey = e.Validator.SecretKey
-                }
+                ValidatorId = e.ValidatorId
             });
     }
 
-    public async Task<EmployeeDto> AddEmployeeAsync(EmployeeDto createEmployeeDto)
+    public async Task<EmployeeDto> AddEmployeeAsync(EmployeeRequestDto employeeDto)
     {
-        var validator = await validatorRepository.GetValidatorByIdAsync(createEmployeeDto.Validator.Id);
+        var validator = await validatorRepository.GetValidatorByIdAsync(employeeDto.ValidatorId);
 
         var employee = new Employee
         {
-            Name = createEmployeeDto.Name,
-            CardUid = createEmployeeDto.CardUid,
-            Validator = new Validator
-            {
-                Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
+            Id = Guid.NewGuid(),
+            FirstName = employeeDto.FirstName,
+            LastName = employeeDto.LastName,
+            CardUid = employeeDto.CardUid,
+            ValidatorId = employeeDto.ValidatorId,
         };
 
         await employeeRepository.AddEmployeeAsync(employee);
@@ -69,20 +55,29 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorR
 
         return new EmployeeDto
         {
-            Name = employee.Name,
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
             CardUid = employee.CardUid,
-            Validator = new ValidatorDto
-            {
-                Id = employee.Validator.Id,
-                Name = employee.Validator.Name,
-                SecretKey = employee.Validator.SecretKey
-            }
+            ValidatorId = employee.ValidatorId,
         };
     }
 
-    public async Task UpdateEmployeeAsync(Guid id, EmployeeDto updateEmployeeDto)
+    public async Task UpdateEmployeeAsync(Guid id, EmployeeUpdateDto employeeDto)
     {
         var employee = await employeeRepository.GetEmployeeByIdAsync(id);
+
+        if (employee == null)
+        {
+            throw new Exception("Employee not found");
+        }
+        
+        if (!string.IsNullOrEmpty(employeeDto.FirstName))
+            employee.FirstName = employeeDto.FirstName;
+        if (!string.IsNullOrEmpty(employeeDto.LastName))
+            employee.LastName = employeeDto.LastName;
+        if (!string.IsNullOrEmpty(employeeDto.CardUid))
+            employee.CardUid = employeeDto.CardUid;
         
         employeeRepository.UpdateEmployee(employee);
         await employeeRepository.SaveChangesAsync();
@@ -99,23 +94,14 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorR
     public async Task<EmployeeDto> GetEmployeeByCardUidAsync(string cardUid)
     {
         var employee = await employeeRepository.GetEmployeeByCardUidAsync(cardUid);
-        var validator = employee.Validator;
-        
-        if (validator == null)
-        {
-            throw new Exception("Validator not found");
-        }
 
-        return new EmployeeDto()
+        return new EmployeeDto
         {
-            Name = employee.Name,
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
             CardUid = employee.CardUid,
-            Validator = new ValidatorDto
-            {
-                Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
+            ValidatorId = employee.ValidatorId
         };
     }
 }

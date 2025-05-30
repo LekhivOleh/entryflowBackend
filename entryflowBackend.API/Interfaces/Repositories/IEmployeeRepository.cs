@@ -10,6 +10,6 @@ public interface IEmployeeRepository
     Task AddEmployeeAsync(Employee employee);
     void UpdateEmployee(Employee employee);
     void DeleteEmployee(Employee employee);
-    Task<EmployeeDto> GetEmployeeByCardUidAsync(string cardUid);
+    Task<Employee> GetEmployeeByCardUidAsync(string cardUid);
     Task SaveChangesAsync();
 }

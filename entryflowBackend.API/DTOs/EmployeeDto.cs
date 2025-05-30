@@ -1,9 +1,43 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace entryflowBackend.API.DTOs;
 
-public record EmployeeDto
+public class EmployeeDto
 {
-    public Guid Id { get; set; }
-    public required string Name { get; set; }
+    [Required]
+    public required Guid Id { get; set; }
+    
+    [Required]
+    public required string FirstName { get; set; }
+    
+    [Required]
+    public required string LastName { get; set; }
+    
+    [Required]
     public required string CardUid { get; set; }
-    public required ValidatorDto Validator { get; set; }
+    
+    [Required]
+    public required Guid ValidatorId { get; set; }
+}
+
+public class EmployeeRequestDto
+{
+    [Required]
+    public required string FirstName { get; set; }
+    
+    [Required]
+    public required string LastName { get; set; }
+    
+    [Required]
+    public required string CardUid { get; set; }
+    
+    [Required]
+    public required Guid ValidatorId { get; set; }
+}
+
+public class EmployeeUpdateDto
+{
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? CardUid { get; set; }
 }

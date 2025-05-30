@@ -16,9 +16,13 @@ public class EmployeeController(IEmployeeService employeeService) : ControllerBa
             var employee = await employeeService.GetEmployeeByIdAsync(id);
             return Ok(employee);
         }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            return BadRequest(ex.Message);
         }
     }
     
@@ -30,12 +34,16 @@ public class EmployeeController(IEmployeeService employeeService) : ControllerBa
     }
 
     [HttpPost(Name = "AddEmployee")]
-    public async Task<IActionResult> AddEmployee(EmployeeDto employeeDto)
+    public async Task<IActionResult> AddEmployee(EmployeeRequestDto employeeDto)
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var employee = await employeeService.AddEmployeeAsync(employeeDto);
-            return CreatedAtAction(nameof(AddEmployee), new { id = employee.Id }, employee);
+            return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
         }
         catch (Exception ex)
         {
@@ -44,16 +52,30 @@ public class EmployeeController(IEmployeeService employeeService) : ControllerBa
     }
     
     [HttpPut("{id}", Name = "UpdateEmployee")]
-    public async Task<IActionResult> UpdateEmployee(Guid id, EmployeeDto employeeDto)
+    public async Task<IActionResult> UpdateEmployee(Guid id, EmployeeUpdateDto employeeDto)
     {
-        await employeeService.UpdateEmployeeAsync(id, employeeDto);
-        return NoContent();
+        try
+        {
+            await employeeService.UpdateEmployeeAsync(id, employeeDto);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     
     [HttpDelete("{id}", Name = "DeleteEmployee")]
     public async Task<IActionResult> DeleteEmployee(Guid id)
     {
-        await employeeService.DeleteEmployeeAsync(id);
-        return NoContent();
+        try
+        {
+            await employeeService.DeleteEmployeeAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

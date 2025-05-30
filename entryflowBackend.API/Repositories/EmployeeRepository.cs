@@ -1,5 +1,4 @@
 using entryflowBackend.API.DbContext;
-using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -11,58 +10,54 @@ public class EmployeeRepository(EntryflowDbContext context) : IEmployeeRepositor
     public async Task<Employee> GetEmployeeByIdAsync(Guid id)
     {
         var employee = await context.Employees
-            .Include(v => v.Validator)
+            .Include(e => e.Validator)
             .FirstOrDefaultAsync(e => e.Id == id);
         return employee ?? throw new KeyNotFoundException($"Employee not found");
     }
 
     public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
     {
-        return await context.Employees
-            .Include(v => v.Validator)
+        var employees = await context
+            .Employees
+            .Include(e => e.Validator)
             .ToListAsync();
+        return employees;
     }
 
     public async Task AddEmployeeAsync(Employee employee)
     {
-        await context.Employees.AddAsync(employee ?? throw new ArgumentNullException(nameof(employee)));
+        await context
+            .Employees
+            .AddAsync(employee ?? throw new ArgumentNullException(nameof(employee)));
     }
 
     public void UpdateEmployee(Employee employee)
     {
-        context.Employees.Update(employee ?? throw new ArgumentNullException(nameof(employee)));
+        context
+            .Employees
+            .Update(employee ?? throw new ArgumentNullException(nameof(employee)));
     }
 
     public void DeleteEmployee(Employee employee)
     {
-        context.Employees.Remove(employee ?? throw new ArgumentNullException(nameof(employee)));
+        context
+            .Employees
+            .Remove(employee ?? throw new ArgumentNullException(nameof(employee)));
     }
 
-    public async Task<EmployeeDto> GetEmployeeByCardUidAsync(string cardUid)
+    public async Task<Employee> GetEmployeeByCardUidAsync(string cardUid)
     {
         var employee = await context
             .Employees
-            .Include(v => v.Validator)
+            .Include(e => e.Validator)
             .SingleOrDefaultAsync(e => e.CardUid == cardUid);
-        
+
         if (employee == null)
         {
             throw new ArgumentNullException(nameof(cardUid));
         }
-        
-        var validator = employee.Validator;
-        
-        return new EmployeeDto
-        {
-            Name = employee.Name,
-            CardUid = employee.CardUid,
-            Validator = new ValidatorDto
-            {
-                Id = validator.Id,
-                Name = validator.Name,
-                SecretKey = validator.SecretKey
-            }
-        };
+
+        return employee;
     }
 
     public async Task SaveChangesAsync()
