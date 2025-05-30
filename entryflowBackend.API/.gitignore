@@ -482,3 +482,9 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+Migrations/
+appsettings.json
+appsettings.Development.json
+
+../entryflowBackend.sln.DotSettings.user
