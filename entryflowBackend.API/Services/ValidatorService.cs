@@ -14,7 +14,6 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         return new ValidatorDto
         {
             Id = validator.Id,
-            SecretKey = validator.SecretKey,
             Name = validator.Name
         };
     }
@@ -25,18 +24,12 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         return validators.Select(v => new ValidatorDto
         {
             Id = v.Id,
-            SecretKey = v.SecretKey,
             Name = v.Name
         });
     }
 
     public async Task<ValidatorDto> AddValidatorAsync(ValidatorRequestDto validatorRequestDto)
     {
-        if (string.IsNullOrWhiteSpace(validatorRequestDto.SecretKey)
-            || string.IsNullOrWhiteSpace(validatorRequestDto.Name))
-        {
-            throw new ArgumentNullException(nameof(validatorRequestDto));
-        }
         var validator = new Validator
         {
             Id = Guid.NewGuid(),
@@ -50,15 +43,17 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         return new ValidatorDto
         {
             Id = validator.Id,
-            SecretKey = validator.SecretKey,
             Name = validator.Name
         };
     }
 
-    public async Task UpdateValidatorAsync(Guid id, ValidatorRequestDto validatorDto)
+    public async Task UpdateValidatorAsync(Guid id, ValidatorUpdateDto validatorDto)
     {
         var validator = await validatorRepository.GetValidatorByIdAsync(id);
-        validator.Name = validatorDto.Name;
+        if (!string.IsNullOrWhiteSpace(validatorDto.Name))
+            validator.Name = validatorDto.Name;
+        if (!string.IsNullOrWhiteSpace(validatorDto.SecretKey))
+            validator.SecretKey = validatorDto.SecretKey;
 
         validatorRepository.UpdateValidator(validator);
         await validatorRepository.SaveChangesAsync();
@@ -79,7 +74,6 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         return new ValidatorDto
         {
             Id = validator.Id,
-            SecretKey = validator.SecretKey,
             Name = validator.Name
         };
     }
