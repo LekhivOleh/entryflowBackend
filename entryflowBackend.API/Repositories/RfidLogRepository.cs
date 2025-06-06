@@ -1,4 +1,5 @@
 using entryflowBackend.API.DbContext;
+using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,17 @@ public class RfidLogRepository(EntryflowDbContext context) : IRfidLogRepository
         return rfidLogs;
     }
 
+    public async Task<IEnumerable<RfidLog>> GetAllRfidLogsByDateAsync(DateTime date)
+    {
+        var rfidLogs = await context
+            .RfidLogs
+            .Include(r => r.Validator)
+            .Include(r => r.Employee)
+            .Where(r => r.Timestamp == date)
+            .ToListAsync();
+        return rfidLogs;
+    }
+
     public async Task AddRfidLogAsync(RfidLog rfidLog)
     {
         await context
@@ -47,7 +59,7 @@ public class RfidLogRepository(EntryflowDbContext context) : IRfidLogRepository
             .RfidLogs
             .Remove(rfidLog ?? throw new ArgumentNullException(nameof(rfidLog)));
     }
-
+    
     public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();

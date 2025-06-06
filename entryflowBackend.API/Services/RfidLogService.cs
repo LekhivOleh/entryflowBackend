@@ -35,7 +35,23 @@ public class RfidLogService(
                 Timestamp = r.Timestamp,
                 ValidatorId = r.ValidatorId,
                 EmployeeId = r.EmployeeId
-            });
+            }
+        );
+    }
+
+    public async Task<IEnumerable<RfidLogDto>> GetAllRfidLogsByDateAsync(DateTime date)
+    {
+        var rfidLogs = await rfidLogRepository.GetAllRfidLogsByDateAsync(date);
+
+        return rfidLogs.Select(r => 
+            new RfidLogDto
+            {
+                Id = r.Id,
+                ValidatorId = r.ValidatorId,
+                EmployeeId = r.EmployeeId,
+                Timestamp = r.Timestamp
+            }
+        );
     }
 
     public async Task<RfidLogDto> AddRfidLogAsync(RfidLogRequestDto rfidLogDto)
