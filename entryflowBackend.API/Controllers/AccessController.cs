@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace entryflowBackend.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class AccessController(
     IValidatorService validatorService, 
     IEmployeeService employeeService,

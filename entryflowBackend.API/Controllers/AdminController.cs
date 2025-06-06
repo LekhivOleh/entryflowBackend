@@ -1,11 +1,13 @@
 using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace entryflowBackend.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableCors]
 public class AdminController(IAdminService adminService, IValidatorService validatorService) : ControllerBase
 {
     [HttpGet("{id}", Name = "GetAdminById")]

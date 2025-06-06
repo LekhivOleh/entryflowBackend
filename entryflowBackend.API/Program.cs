@@ -1,11 +1,15 @@
+using System.Runtime.CompilerServices;
+using System.Text;
 using entryflowBackend.API.DbContext;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Interfaces.Services;
 using entryflowBackend.API.Models;
 using entryflowBackend.API.Repositories;
 using entryflowBackend.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 namespace entryflowBackend.API;
@@ -16,6 +20,16 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+        
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<EntryflowDbContext>(options =>
             options.UseNpgsql(connectionString));
@@ -51,10 +65,8 @@ public static class Program
                 .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.HttpClient);
         });
 
-        app.MapGet("/", () => "At least it runs");
-
+        app.UseCors();
         app.UseAuthorization();
-        
         app.MapControllers();
 
         app.Run();

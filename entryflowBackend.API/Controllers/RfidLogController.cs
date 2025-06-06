@@ -1,36 +1,34 @@
 using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace entryflowBackend.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
+[EnableCors]
 public class RfidLogController(IRfidLogService rfidLogService) : ControllerBase
 {
-    [HttpGet("{id}", Name = "GetRfidLogById")]
-    public async Task<IActionResult> GetRfidLogById(Guid id)
-    {
-        try
-        {
-            var rfidLog = await rfidLogService.GetRfidLogByIdAsync(id);
-            return Ok(rfidLog);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-    
     [HttpGet(Name = "GetAllRfidLogs")]
     public async Task<IActionResult> GetAllRfidLogs()
     {
         var rfidLogs = await rfidLogService.GetAllRfidLogsAsync();
         return Ok(rfidLogs);
+    }
+
+    [HttpGet("by-date", Name = "GetAllRfidLogsByDate")]
+    public async Task<IActionResult> GetAllRfidLogsByDate(DateTime date)
+    {
+        try
+        {
+            var rfidLogs = await rfidLogService.GetAllRfidLogsByDateAsync(date);
+            return Ok(rfidLogs);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost(Name = "AddRfidLog")]
@@ -43,7 +41,7 @@ public class RfidLogController(IRfidLogService rfidLogService) : ControllerBase
                 return BadRequest(ModelState);
             }
             var rfidLog = await rfidLogService.AddRfidLogAsync(rfidLogDto);
-            return CreatedAtAction(nameof(GetRfidLogById), new { id = rfidLog.Id }, rfidLog);       
+            return CreatedAtAction(nameof(AddRfidLog), new { id = rfidLog.Id }, rfidLog);       
         }
         catch (Exception ex)
         {

@@ -3,13 +3,22 @@ using entryflowBackend.API.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders.Physical;
+using Microsoft.AspNetCore.Cors;
 
 namespace entryflowBackend.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class ValidatorController(IValidatorService validatorService) : ControllerBase
+[Route("[controller]")]
+[EnableCors]
+public class ValidatorController : ControllerBase
 {
+    private readonly IValidatorService validatorService;
+
+    public ValidatorController(IValidatorService validatorService)
+    {
+        this.validatorService = validatorService;
+    }
+
     [HttpGet("{id}", Name = "GetValidatorById")]
     public async Task<IActionResult> GetValidatorById(Guid id)
     {

@@ -1,11 +1,13 @@
 using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace entryflowBackend.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableCors]
 public class EmployeeController(IEmployeeService employeeService) : ControllerBase
 {
     [HttpGet("{id}", Name = "GetEmployeeById")]
