@@ -9,4 +9,6 @@ public interface IAdminService
     Task<AdminDto> CreateAdminAsync(AdminRequestDto dto);
     Task UpdateAdminAsync(Guid id, AdminUpdateDto dto);
     Task DeleteAdmin(Guid id);
+    Task<AdminDto?> GetAdminByEmailAsync(string email);
+    Task<bool> VerifyPasswordAsync(string email, string password);
 }

@@ -28,6 +28,17 @@ public class RfidLogRepository(EntryflowDbContext context) : IRfidLogRepository
         return rfidLogs;
     }
 
+    public async Task<IEnumerable<RfidLog>> GetAllRfidLogsByAdminAsync(AdminDto admin)
+    {
+        var rfidLogs = await context
+            .RfidLogs
+            .Include(r => r.Validator)
+            .Include(r => r.Employee)
+            .Where(r => r.ValidatorId == admin.ValidatorId)
+            .ToListAsync();
+        return rfidLogs;
+    }
+
     public async Task<IEnumerable<RfidLog>> GetAllRfidLogsByDateAsync(DateTime date)
     {
         var rfidLogs = await context

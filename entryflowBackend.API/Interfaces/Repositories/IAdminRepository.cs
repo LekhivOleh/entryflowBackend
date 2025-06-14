@@ -10,4 +10,5 @@ public interface IAdminRepository
     void UpdateAdmin(Admin admin);
     void DeleteAdmin(Admin admin);
     Task SaveChangesAsync();
+    Task<Admin?> GetAdminByEmailAsync(string email);
 }

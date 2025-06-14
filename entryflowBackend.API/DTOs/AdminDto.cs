@@ -40,3 +40,32 @@ public class AdminUpdateDto
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
 }
+
+public class AdminLoginDto
+{
+    [Required]
+    public required string Email { get; set; }
+    [Required]
+    public required string Password { get; set; }
+}
+
+public class AdminRegisterWithSecretDto
+{
+    [Required]
+    [MaxLength(20)]
+    public required string FirstName { get; set; }
+
+    [Required]
+    [MaxLength(20)]
+    public required string LastName { get; set; }
+
+    [Required]
+    [MaxLength(320)]
+    public required string Email { get; set; }
+
+    [Required]
+    public required string Password { get; set; }
+
+    [Required]
+    public required string ValidatorSecret { get; set; }
+}

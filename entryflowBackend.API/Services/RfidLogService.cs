@@ -8,7 +8,8 @@ namespace entryflowBackend.API.Services;
 public class RfidLogService(
     IRfidLogRepository rfidLogRepository,
     IValidatorService validatorService,
-    IEmployeeService employeeService
+    IEmployeeService employeeService,
+    IAdminService adminService
 ) : IRfidLogService
 {
     public async Task<RfidLogDto> GetRfidLogByIdAsync(Guid id)
@@ -28,6 +29,24 @@ public class RfidLogService(
     {
         var rfidLogs = await rfidLogRepository.GetAllRfidLogsAsync();
 
+        return rfidLogs.Select(r =>
+            new RfidLogDto
+            {
+                Id = r.Id,
+                Timestamp = r.Timestamp,
+                ValidatorId = r.ValidatorId,
+                EmployeeId = r.EmployeeId
+            }
+        );
+    }
+
+    public async Task<IEnumerable<RfidLogDto>> GetAllRfidLogsByAdminAsync(string email)
+    {
+        var admin = await adminService.GetAdminByEmailAsync(email);
+        if (admin == null)
+            throw new Exception("Admin not found");
+        var rfidLogs = await rfidLogRepository.GetAllRfidLogsByAdminAsync(admin);
+        
         return rfidLogs.Select(r =>
             new RfidLogDto
             {

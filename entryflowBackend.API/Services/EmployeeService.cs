@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace entryflowBackend.API.Services;
 
-public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorRepository validatorRepository) : IEmployeeService
+public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorRepository validatorRepository, IAdminService adminService) : IEmployeeService
 {
     public async Task<EmployeeDto> GetEmployeeByIdAsync(Guid id)
     {
@@ -25,6 +25,24 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IValidatorR
     public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync()
     {
         var employees = await employeeRepository.GetAllEmployeesAsync();
+
+        return employees.Select(e =>
+            new EmployeeDto
+            {
+                Id = e.Id,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                CardUid = e.CardUid,
+                ValidatorId = e.ValidatorId
+            });
+    }
+    
+    public async Task<IEnumerable<EmployeeDto>> GetEmployeesByAdminAsync(string email)
+    {
+        var admin = await adminService.GetAdminByEmailAsync(email);
+        if (admin == null)
+            throw new Exception("Admin not found");
+        var employees = await employeeRepository.GetAllEmployeesByAdminAsync(admin);
 
         return employees.Select(e =>
             new EmployeeDto

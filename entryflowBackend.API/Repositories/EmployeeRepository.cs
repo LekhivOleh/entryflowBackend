@@ -1,4 +1,5 @@
 using entryflowBackend.API.DbContext;
+using entryflowBackend.API.DTOs;
 using entryflowBackend.API.Interfaces.Repositories;
 using entryflowBackend.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,16 @@ public class EmployeeRepository(EntryflowDbContext context) : IEmployeeRepositor
         var employees = await context
             .Employees
             .Include(e => e.Validator)
+            .ToListAsync();
+        return employees;
+    }
+
+    public async Task<IEnumerable<Employee>> GetAllEmployeesByAdminAsync(AdminDto admin)
+    {
+        var employees = await context
+            .Employees
+            .Include(e => e.Validator)
+            .Where(e => e.Validator.Admins.Any(a => a.Id == admin.Id))
             .ToListAsync();
         return employees;
     }

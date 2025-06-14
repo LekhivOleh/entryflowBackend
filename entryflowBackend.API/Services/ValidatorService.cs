@@ -67,10 +67,10 @@ public class ValidatorService(IValidatorRepository validatorRepository) : IValid
         await validatorRepository.SaveChangesAsync();
     }
 
-    public async Task<ValidatorDto> GetValidatorBySecretAsync(string secretKey)
+    public async Task<ValidatorDto?> GetValidatorBySecretAsync(string secret)
     {
-        var validator = await validatorRepository.GetValidatorBySecretAsync(secretKey);
-        
+        var validator = await validatorRepository.GetValidatorBySecretAsync(secret);
+        if (validator == null) return null;
         return new ValidatorDto
         {
             Id = validator.Id,

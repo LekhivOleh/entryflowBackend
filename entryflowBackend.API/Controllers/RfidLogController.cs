@@ -16,6 +16,20 @@ public class RfidLogController(IRfidLogService rfidLogService) : ControllerBase
         var rfidLogs = await rfidLogService.GetAllRfidLogsAsync();
         return Ok(rfidLogs);
     }
+    
+    [HttpGet("by-admin/{email}", Name = "GetAllRfidLogsByAdmin")]
+    public async Task<IActionResult> GetAllRfidLogsByAdmin(string email)
+    {
+        try
+        {
+            var rfidLogs = await rfidLogService.GetAllRfidLogsByAdminAsync(email);
+            return Ok(rfidLogs);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpGet("by-date", Name = "GetAllRfidLogsByDate")]
     public async Task<IActionResult> GetAllRfidLogsByDate(DateTime date)

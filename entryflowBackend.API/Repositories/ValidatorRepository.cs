@@ -43,11 +43,9 @@ public class ValidatorRepository(EntryflowDbContext context) : IValidatorReposit
             .Remove(validator);
     }
 
-    public async Task<Validator> GetValidatorBySecretAsync(string? secretKey)
+    public async Task<Validator?> GetValidatorBySecretAsync(string secret)
     {
-        return await context
-            .Validators
-            .SingleOrDefaultAsync(v => v.SecretKey == secretKey) ?? throw new ArgumentNullException(nameof(secretKey));
+        return await context.Validators.SingleOrDefaultAsync(v => v.SecretKey == secret);
     }
     
     public async Task SaveChangesAsync()

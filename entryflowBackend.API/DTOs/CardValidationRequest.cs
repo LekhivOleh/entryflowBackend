@@ -1,7 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace entryflowBackend.API.DTOs;
+
 
 public class CardValidationRequest
 {
-    public required string Uid { get; set; } = string.Empty;
-    public required string ValidatorSecret { get; set; } = string.Empty;
+    [JsonPropertyName("uid")]
+    public string Uid { get; set; }
+
+    [JsonPropertyName("validatorSecret")]
+    public string ValidatorSecret { get; set; }
 }

@@ -45,4 +45,11 @@ public class AdminRepository(EntryflowDbContext context) : IAdminRepository
     {
         await context.SaveChangesAsync();
     }
+
+    public async Task<Admin?> GetAdminByEmailAsync(string email)
+    {
+        return await context.Admins
+            .Include(x => x.Validator)
+            .SingleOrDefaultAsync(x => x.Email == email);
+    }
 }

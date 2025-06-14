@@ -10,4 +10,5 @@ public interface IEmployeeService
     Task UpdateEmployeeAsync(Guid id, EmployeeUpdateDto updateEmployeeDto);
     Task DeleteEmployeeAsync(Guid id);
     Task<EmployeeDto> GetEmployeeByCardUidAsync(string cardUid);
+    Task<IEnumerable<EmployeeDto>> GetEmployeesByAdminAsync(string email);
 }

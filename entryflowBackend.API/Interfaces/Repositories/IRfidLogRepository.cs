@@ -7,6 +7,7 @@ public interface IRfidLogRepository
 {
     Task<RfidLog> GetRfidLogByIdAsync(Guid id);
     Task<IEnumerable<RfidLog>> GetAllRfidLogsAsync();
+    Task<IEnumerable<RfidLog>> GetAllRfidLogsByAdminAsync(AdminDto admin);
     Task<IEnumerable<RfidLog>> GetAllRfidLogsByDateAsync(DateTime date);
     Task AddRfidLogAsync(RfidLog rfidLog);
     void UpdateRfidLog(RfidLog rfidLog);

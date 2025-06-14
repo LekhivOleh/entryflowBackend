@@ -17,26 +17,33 @@ public class AccessController(
     [HttpPost("validate")]
     public async Task<IActionResult> ValidateCard([FromBody] CardValidationRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.ValidatorSecret))
-            return BadRequest("Validator secret is required.");
-        if (string.IsNullOrWhiteSpace(request.Uid))
-            return BadRequest("Card UID is required.");
-
-        var validator = await validatorService.GetValidatorBySecretAsync(request.ValidatorSecret);
-        if (validator == null)
-            return BadRequest("denied");
-
-        var employee = await employeeService.GetEmployeeByCardUidAsync(request.Uid);
-        if (employee == null || employee.ValidatorId != validator.Id)
-            return BadRequest("denied");
-
-        var rfidLog = new RfidLogRequestDto
+        try
         {
-            ValidatorId = validator.Id,
-            EmployeeId = employee.Id
-        };
-        await rfidLogService.AddRfidLogAsync(rfidLog);
+            if (string.IsNullOrWhiteSpace(request.ValidatorSecret))
+                return BadRequest("Validator secret is required.");
+            if (string.IsNullOrWhiteSpace(request.Uid))
+                return BadRequest("Card UID is required.");
 
-        return Ok("granted");
+            var validator = await validatorService.GetValidatorBySecretAsync(request.ValidatorSecret);
+            if (validator == null)
+                return BadRequest("denied");
+
+            var employee = await employeeService.GetEmployeeByCardUidAsync(request.Uid);
+            if (employee == null || employee.ValidatorId != validator.Id)
+                return BadRequest("denied");
+
+            var rfidLog = new RfidLogRequestDto
+            {
+                ValidatorId = validator.Id,
+                EmployeeId = employee.Id
+            };
+            await rfidLogService.AddRfidLogAsync(rfidLog);
+
+            return Ok("granted");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(418, "Bro is not going back");
+        }
     }
 }

@@ -27,7 +27,21 @@ public class EmployeeController(IEmployeeService employeeService) : ControllerBa
             return BadRequest(ex.Message);
         }
     }
-    
+
+    [HttpGet("by-admin/{email}", Name = "GetAllEmployeesByAdmin")]
+    public async Task<IActionResult> GetAllEmployeesByAdmin(string email)
+    {
+        try
+        {
+            var employees = await employeeService.GetEmployeesByAdminAsync(email);
+            return Ok(employees);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpGet(Name = "GetAllEmployees")]
     public async Task<IActionResult> GetAllEmployees()
     {
@@ -44,6 +58,7 @@ public class EmployeeController(IEmployeeService employeeService) : ControllerBa
             {
                 return BadRequest(ModelState);
             }
+            
             var employee = await employeeService.AddEmployeeAsync(employeeDto);
             return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
         }

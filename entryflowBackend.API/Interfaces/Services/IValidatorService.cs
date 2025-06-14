@@ -9,5 +9,5 @@ public interface IValidatorService
     Task<ValidatorDto> AddValidatorAsync(ValidatorRequestDto validatorRequestDto);
     Task UpdateValidatorAsync(Guid id, ValidatorUpdateDto validatorDto);
     Task DeleteValidatorAsync(Guid id);
-    Task<ValidatorDto> GetValidatorBySecretAsync(string secretKey);
+    Task<ValidatorDto?> GetValidatorBySecretAsync(string secret);
 }

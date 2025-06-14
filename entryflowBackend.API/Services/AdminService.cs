@@ -115,4 +115,33 @@ public class AdminService(
         adminRepository.DeleteAdmin(admin);
         await adminRepository.SaveChangesAsync();
     }
+
+    public async Task<AdminDto?> GetAdminByEmailAsync(string email)
+    {
+        var admin = await adminRepository.GetAdminByEmailAsync(email);
+        if (admin == null) return null;
+        var validator = admin.Validator;
+        if (validator == null) throw new Exception("Validator not found");
+        return new AdminDto
+        {
+            Id = admin.Id,
+            FirstName = admin.FirstName,
+            LastName = admin.LastName,
+            Email = admin.Email,
+            Validator = new ValidatorDto
+            {
+                Id = validator.Id,
+                Name = validator.Name
+            },
+            ValidatorId = admin.ValidatorId
+        };
+    }
+
+    public async Task<bool> VerifyPasswordAsync(string email, string password)
+    {
+        var admin = await adminRepository.GetAdminByEmailAsync(email);
+        if (admin == null) return false;
+        var result = passwordHasher.VerifyHashedPassword(admin, admin.Password, password);
+        return result == PasswordVerificationResult.Success;
+    }
 }
